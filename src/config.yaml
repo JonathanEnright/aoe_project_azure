@@ -1,36 +1,41 @@
-# parse_date params (update here for 1 time loads or backdating)
-backdate_days_start: 90
-backdate_days_end: 1
-target_run_date: ~
-target_run_end_date: ~
-date_format: '%Y-%m-%d'
+# --------------------------------------------------------------------------
+# Set all defaults
+set_defaults: &parent_defaults
+  backdate_days_start: 90
+  backdate_days_end: 1
+  target_run_date: ~
+  target_run_end_date: ~
+  date_format: '%Y-%m-%d'
+  storage_account: jonoaoedlext 
+  container: landing
+  base_url: https://aoestats.io
+  dir_url: '/media/db_dumps/date_range%3D'
+  params: ~
 
-# AoeStats
-stats_dir_url: '/media/db_dumps/date_range%3D'
-matches_fn_suffix: 'matches'
-players_fn_suffix: 'players'
-stats_base_url: https://aoestats.io
-matches_folder_name: dev/matches
-players_folder_name: dev/players
+# Each datasource is given its own key and values, inherited from defaults
+datasource:
+  metadata:
+    <<: *parent_defaults
+    endpoint: '/api/db_dumps.json'
+    suffix: metadata
 
-metadata_endpoint: /api/db_dumps.json
-metadata_fn_suffix: metadata
-metadata_folder_name: dev/meta
+  relic:
+    <<: *parent_defaults
+    base_url: https://aoe-api.worldsedgelink.com
+    endpoint: '/community/leaderboard/getLeaderBoard2?'
+    suffix: relic
+    params: 
+      leaderboard_id: 3
+      title: age2
+      sort_by: 0
+      chunk_size: 100 
 
-# RelicLink
-relic_base_url: https://aoe-api.worldsedgelink.com
-relic_endpoint: '/community/leaderboard/getLeaderBoard2?'
-relic_params: 
-  leaderboard_id: 3
-  title: age2
-  sort_by: 0
-  chunk_size: 100 
-relic_fn_suffix: relic
-relic_folder_name: dev/rl_api
+  matches:
+    <<: *parent_defaults
+    suffix: 'matches'
+    prefix: 'matches'
 
-# Azure storage account
-storage_account: jonoaoedlext 
-container: landing
-
-# s3 bucket. Other bucket params are in .env file.
-# bucket: aoe2dumps
+  players:
+    <<: *parent_defaults
+    suffix: 'players'
+    prefix: 'players'

@@ -2,7 +2,6 @@ import yaml
 from datetime import datetime, timedelta
 import requests
 import os
-# import boto3
 from typing import Dict, Optional, BinaryIO
 import io
 import time
@@ -15,6 +14,12 @@ from databricks.sdk.core import Config as DBX_Config
 from pyspark.sql import SparkSession
 
 logger = logging.getLogger(__name__)
+
+# Get the Azure SDK logger
+azure_logger = logging.getLogger("azure")
+
+# Set the logging level to WARNING to reduce verboseness
+azure_logger.setLevel(logging.WARNING) 
 
 # # Load environment variables from databricks secrets
 # from pyspark.sql import SparkSession
@@ -37,14 +42,20 @@ logger = logging.getLogger(__name__)
 class Config:
     def __init__(self, yaml_file: str):
         with open(yaml_file, "r") as f:
-            self.__dict__.update(yaml.safe_load(f))
+            self.config_dict = yaml.safe_load(f)
+
+        # Set defaults from the parent configuration
+        parent_defaults = self.config_dict.get('set_defaults', {})
         self.run_date = self.parse_date(
-            self.backdate_days_start, self.target_run_date, self.date_format
+            parent_defaults.get('backdate_days_start'), 
+            parent_defaults.get('target_run_date'), 
+            parent_defaults.get('date_format')
         )
         self.run_end_date = self.parse_date(
-            self.backdate_days_end, self.target_run_end_date, self.date_format
+            parent_defaults.get('backdate_days_end'), 
+            parent_defaults.get('target_run_end_date'), 
+            parent_defaults.get('date_format')
         )
-
     @staticmethod
     def parse_date(backdate_days: int, specific_date: str, date_format: str):
         """Creates a date object on initialisation. If target_run_date is specified,
@@ -55,6 +66,19 @@ class Config:
         else:
             result = (datetime.now() - timedelta(days=backdate_days)).date()
         return result
+
+class Datasource:
+    def __init__(self, name, config): 
+        self.name = name
+        datasource_config = config.config_dict['datasource'].get(name, {})
+        
+        # Dynamically set all attributes from the configuration
+        for key, value in datasource_config.items():
+            setattr(self, key, value)
+
+        # Access attributes from the Config object
+        self.run_date = config.run_date
+        self.run_end_date = config.run_end_date
 
 
 # -----------------------------------------------------------------------------
@@ -119,28 +143,6 @@ def upload_to_adls2(adls2, data, storage_account, container, file_path):
         logger.error(f"Error uploading file: {e}")
 
 
-# def create_s3_session(s3=None):
-#     if s3 == None:
-#         logger.info("Authenticating to S3.")
-#         s3 = boto3.client(
-#             "s3",
-#             aws_access_key_id=os.getenv("AWS_ACCESS_KEY"),
-#             aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-#             region_name=os.getenv("AWS_REGION"),
-#         )
-#     return s3
-
-
-# def upload_to_s3(s3, data, bucket_name, path_key):
-#     try:
-#         s3.upload_fileobj(data, bucket_name, path_key)
-#         logger.info(
-#             f"File '{path_key}' uploaded to S3 bucket '{bucket_name}' successfully!"
-#         )
-#     except Exception as e:
-#         logger.error(f"Error uploading file: {e}")
-
-
 def timer(func):
     """A simple timer decorator to record how long a function took to run."""
 
@@ -177,28 +179,3 @@ def connect_to_databricks(
     except Exception as e:
         logger.warning(f"Could not set catalog/schema: {str(e)}")
     return spark
-
-
-# def sf_connect(
-#     db: str | None = os.getenv("SF_DATABASE"),
-#     schema: str | None = os.getenv("SF_SCHEMA"),
-# ) -> snowflake.connector.connection.SnowflakeConnection:
-#     """
-#     Uses environment variables (store in .env) to connect to Snowflake.
-#     Optional: to specify database or schema.
-#     Returns: A snowflake connection object.
-#     """
-
-#     logger.info("Connecting to Snowflake...")
-#     connection_parameters = {
-#         "account": os.getenv("SF_ACCOUNT_NAME"),
-#         "user": os.getenv("SF_USERNAME"),
-#         "password": os.getenv("SF_PASSWORD"),
-#         "warehouse": os.getenv("SF_WAREHOUSE"),
-#         "role": os.getenv("SF_ROLE"),
-#         "database": db,
-#         "schema": schema,
-#     }
-#     connection = snowflake.connector.connect(**connection_parameters)
-#     logger.info("Connection successfully created")
-#     return connection
