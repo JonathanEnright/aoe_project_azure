@@ -9,7 +9,7 @@ import logging
 # from import_secrets import *
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
-from databricks.connect.session import DatabricksSession as SparkSession
+from databricks.connect.session import DatabricksSession
 from databricks.sdk.core import Config as DBX_Config
 from pyspark.sql import SparkSession
 
@@ -162,7 +162,7 @@ def timer(func):
 def connect_to_databricks(
     catalog: str | None = os.getenv("DATABRICKS_CATALOG"),
     schema: str | None = os.getenv("DATABRICKS_SCHEMA"),
-    ) -> SparkSession:
+    ) -> DatabricksSession:
     """
     Uses environment variables (store in .env) to connect to Databricks.
     Optional: to specify catalog or schema.
@@ -172,10 +172,48 @@ def connect_to_databricks(
     profile=os.getenv("DATABRICKS_PROFILE")
     cluster_id=os.getenv("DATABRICKS_CLUSTER_ID")
     dbx_session = DBX_Config(profile=profile, cluster_id=cluster_id)
-    spark = SparkSession.builder.sdkConfig(dbx_session).getOrCreate()
+    spark = DatabricksSession.builder.sdkConfig(dbx_session).getOrCreate()
     try:
         spark.catalog.setCurrentCatalog(catalog)
         spark.catalog.setCurrentDatabase(schema)
     except Exception as e:
         logger.warning(f"Could not set catalog/schema: {str(e)}")
+    logger.info(f"Successfully connected to Databricks ('{catalog}.{schema}')")
     return spark
+
+
+def load_yaml_data(yaml_file, yaml_key):
+    with open(yaml_file, "r") as f:
+        ext_config = yaml.safe_load(f)
+    cfg = ext_config.get(yaml_key)
+    logger.info(f"Successfully loaded '{yaml_key}' dict values from '{yaml_file}'!")
+    return cfg
+
+
+def create_external_table(yaml_file, yaml_key):
+    cfg = load_yaml_data(yaml_file, yaml_key)
+    tbl = cfg['table']
+    
+    # Connect to Databricks with specified context
+    spark = connect_to_databricks(cfg['catalog'],cfg['database'])
+
+    # Configure Spark to handle Parquet timestamps correctly
+    spark.conf.set("spark.sql.legacy.parquet.nanosAsLong", "true")
+
+    # If table in Unity Catalogue, refresh metadata to read latest files
+    if spark.catalog.tableExists(tbl):
+        spark.catalog.refreshTable(tbl)
+        logger.info(f"External Table '{tbl}' exists, metadata now refreshed!")
+
+    # Else, register as new External table in Databricks Unity Catalogue
+    else:
+        create_table_sql = f"""
+            CREATE TABLE {tbl}
+            USING {cfg['format']}
+            OPTIONS ( {cfg['options']} )
+            LOCATION "{cfg['location']}"
+        """
+        spark.sql(create_table_sql)
+
+        logger.info(f"External Table '{tbl}' successfully created!")
+    

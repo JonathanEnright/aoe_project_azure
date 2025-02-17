@@ -1,0 +1,23 @@
+matches:
+  table: matches_ext
+  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/matches/"
+  format: parquet
+  catalog: "aoe_dev"
+  database: "bronze"
+  options: "inferSchema 'true'"
+
+players:
+  table: players_ext
+  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/players/"
+  format: parquet
+  catalog: "aoe_dev"
+  database: "bronze"
+  options: "inferSchema 'true'"
+
+relic:
+  table: relic_ext
+  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/rl_api/"
+  format: json
+  catalog: "aoe_dev"
+  database: "bronze"
+  options: "multiline 'true'"
