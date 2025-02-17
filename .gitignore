@@ -6,3 +6,7 @@ import_secrets.py
 __pycache__
 test_adls2.py
 test_upload_file.txt
+setup_commands
+.vscode
+db_testing_2.py
+df_trans.py

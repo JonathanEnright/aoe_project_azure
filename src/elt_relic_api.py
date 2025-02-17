@@ -19,12 +19,9 @@ YAML_CONFIG = os.path.join(script_dir, "config.yaml")
 
 @timer
 def main(*args, **kwargs):
-    # Generic Setup:
+    # Setup:
     adls2 = create_adls2_session()
-    config = Config(YAML_CONFIG)
-    ds = Datasource("relic", config)    
-
-    # Script specific variables
+    ds = Datasource("relic", Config(YAML_CONFIG))    
     _validation_schema = RelicResponse
 
     # Extract phase

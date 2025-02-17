@@ -7,7 +7,7 @@ set_defaults: &parent_defaults
   target_run_end_date: ~
   date_format: '%Y-%m-%d'
   storage_account: jonoaoedlext 
-  container: landing
+  container: dev
   base_url: https://aoestats.io
   dir_url: '/media/db_dumps/date_range%3D'
   params: ~
@@ -16,11 +16,13 @@ set_defaults: &parent_defaults
 datasource:
   metadata:
     <<: *parent_defaults
+    container: dev/meta
     endpoint: '/api/db_dumps.json'
     suffix: metadata
 
   relic:
     <<: *parent_defaults
+    container: dev/rl_api
     base_url: https://aoe-api.worldsedgelink.com
     endpoint: '/community/leaderboard/getLeaderBoard2?'
     suffix: relic
@@ -32,10 +34,12 @@ datasource:
 
   matches:
     <<: *parent_defaults
+    container: dev/matches
     suffix: 'matches'
     prefix: 'matches'
 
   players:
     <<: *parent_defaults
+    container: dev/players
     suffix: 'players'
     prefix: 'players'
