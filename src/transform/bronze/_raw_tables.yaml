@@ -5,6 +5,9 @@ matches:
   catalog: "aoe_dev"
   database: "bronze"
   options: "inferSchema 'true'"
+  source: 'AOESTATS_MATCHES'
+  file_date: true
+  managed_table: matches_raw
 
 players:
   table: players_ext
@@ -13,6 +16,9 @@ players:
   catalog: "aoe_dev"
   database: "bronze"
   options: "inferSchema 'true'"
+  source: 'AOESTATS_PLAYERS'
+  file_date: true
+  managed_table: players_raw
 
 relic:
   table: relic_ext
@@ -21,3 +27,6 @@ relic:
   catalog: "aoe_dev"
   database: "bronze"
   options: "multiline 'true'"
+  source: 'RELIC_LINK_API'
+  file_date: false
+  managed_table: relic_raw
