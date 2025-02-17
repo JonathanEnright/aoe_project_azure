@@ -11,7 +11,8 @@ from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 from databricks.connect.session import DatabricksSession
 from databricks.sdk.core import Config as DBX_Config
-from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, input_file_name, split, lit, to_date, current_timestamp
+from pyspark.sql.types import StringType
 
 logger = logging.getLogger(__name__)
 
@@ -187,15 +188,12 @@ def load_yaml_data(yaml_file, yaml_key):
         ext_config = yaml.safe_load(f)
     cfg = ext_config.get(yaml_key)
     logger.info(f"Successfully loaded '{yaml_key}' dict values from '{yaml_file}'!")
+    print(cfg)
     return cfg
 
 
-def create_external_table(yaml_file, yaml_key):
-    cfg = load_yaml_data(yaml_file, yaml_key)
+def create_external_table(spark, cfg):
     tbl = cfg['table']
-    
-    # Connect to Databricks with specified context
-    spark = connect_to_databricks(cfg['catalog'],cfg['database'])
 
     # Configure Spark to handle Parquet timestamps correctly
     spark.conf.set("spark.sql.legacy.parquet.nanosAsLong", "true")
@@ -216,4 +214,34 @@ def create_external_table(yaml_file, yaml_key):
         spark.sql(create_table_sql)
 
         logger.info(f"External Table '{tbl}' successfully created!")
+    return spark, cfg
     
+
+def add_metadata_columns(spark, cfg):
+    
+    # Use DataFrame API to read the table
+    df = spark.read.table(f"{cfg['table']}")
+
+    # Add filename
+    df = df.withColumn("fn", split(input_file_name(), cfg['location'])[1])
+    
+    # Extract file_date if specified
+    if cfg['file_date']:
+        df = df.withColumn("file_date", to_date(split(col("fn"), '\\.')[0]))
+
+    # Record source of data
+    df = df.withColumn("source", lit(cfg['source']).cast(StringType()))
+
+    # Load date time stamp
+    df = df.withColumn("ldts", current_timestamp())
+
+    # Remove duplicates
+    df = df.dropDuplicates()   
+
+    # Add filter condition
+    # TODO: Add filter condition function call
+
+    # Create or replace the managed table in Unity Catalog
+    df.write.format("delta").mode("overwrite").saveAsTable(f"{cfg['managed_table']}")
+    
+    logger.info(f"Managed Table '{cfg['managed_table']}' successfully created!")
