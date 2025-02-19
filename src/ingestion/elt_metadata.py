@@ -1,15 +1,12 @@
-from utils import Config, Datasource, timer, fetch_api_json, create_adls2_session
-from extract import validate_json_schema, ApiSchema
-from load import load_json_data
-import logging
+from common.base_utils import Config, Datasource, timer, fetch_api_json, create_adls2_session
+from common.extract_utils import validate_json_schema
+from common.pydantic_models import ApiSchema
+from common.load_utils import load_json_data
 import os
 from pathlib import Path
+from common.logging_config import setup_logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+logger = setup_logging()
 
 # Get the directory of the current script
 script_dir = Path(__file__).resolve().parent
