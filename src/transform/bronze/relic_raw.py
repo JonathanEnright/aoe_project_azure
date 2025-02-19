@@ -1,25 +1,9 @@
-from pathlib import Path
-import sys
-parent_dir = Path(__file__).resolve().parent.parent.parent
-sys.path.append(str(parent_dir))
-from utils import create_external_table, load_yaml_data, connect_to_databricks, add_metadata_columns
-import logging
+from common.logging_config import setup_logging
+from transform.bronze._template_ext import ext_pipeline
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+# All configuration of the external table is defined in yaml.
+# Simply pass the yaml (dictionary) key from '_raw_tables.yaml'
+yaml_key = 'relic' 
 
-# Script to create both a external and then managed table over the top
-
-yaml_file = '_raw_tables.yaml'
-yaml_key = 'relic'
-
-cfg = load_yaml_data(yaml_file, yaml_key)
-spark = connect_to_databricks(cfg['catalog'],cfg['database'])
-
-create_external_table(spark, cfg)
-add_metadata_columns(spark, cfg)
-
-logger.info('Script Complete!')
+logger = setup_logging()
+ext_pipeline(yaml_key, logger)

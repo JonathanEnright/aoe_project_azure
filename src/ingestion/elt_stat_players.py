@@ -1,21 +1,16 @@
-from utils import Config, Datasource, timer, fetch_api_file, create_adls2_session
-from extract import (
-    Players,
+from common.base_utils import Config, Datasource, timer, fetch_api_file, create_adls2_session
+from common.extract_utils import (
     generate_weekly_queries,
     create_stats_endpoints,
     validate_parquet_schema,
 )
-from load import load_parquet_data
-import logging
+from common.pydantic_models import Players
+from common.load_utils import load_parquet_data
 import os
 from pathlib import Path
+from common.logging_config import setup_logging
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
+logger = setup_logging()
 # Get the directory of the current script
 script_dir = Path(__file__).resolve().parent
 
