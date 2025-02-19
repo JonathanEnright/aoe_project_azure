@@ -10,3 +10,7 @@ setup_commands
 .vscode
 db_testing_2.py
 df_trans.py
+aoe_azure.egg-info
+tree.py
+DIRECTORY_TREE.md
+setup.py
