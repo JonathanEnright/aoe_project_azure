@@ -2,7 +2,7 @@ from common.base_utils import create_databricks_session
 from common.transform_utils import read_source_data, apply_target_schema, write_to_table, deduplicate_by_key
 from common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import col, explode
+from pyspark.sql.functions import col, explode, to_timestamp
 from pyspark.sql.types import (
     StructType, StructField, IntegerType, StringType, TimestampType
 )
@@ -21,7 +21,7 @@ def define_target_schema():
         StructField("highestrank", IntegerType()),
         StructField("highestranklevel", IntegerType()),
         StructField("highestrating", IntegerType()),
-        StructField("lastmatchdate", IntegerType()),
+        StructField("last_match_date", TimestampType()),
         StructField("leaderboard_id", IntegerType()),
         StructField("losses", IntegerType()),
         StructField("rank", IntegerType()),
@@ -49,6 +49,7 @@ def transform_dataframe(df):
         "source"
     ).select(
         col("lstats.*"),
+        to_timestamp(col("lastmatchdate")).alias("last_match_date"),
         "ldts",
         "source"
     ).distinct()

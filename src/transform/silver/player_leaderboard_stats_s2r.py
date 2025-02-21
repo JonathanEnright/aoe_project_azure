@@ -39,7 +39,7 @@ def transform_dataframe(stat_group_data, leaderboard_data, country_codes):
         col("losses"),
         col("rank").alias("current_rank"),
         col("rating").alias("current_rating"),
-        col("lastmatchdate").alias("last_match_date"),
+        col("last_match_date"),
         col("ldts"),
         col("source")
         )
