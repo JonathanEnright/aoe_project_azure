@@ -2,7 +2,7 @@ from common.base_utils import create_databricks_session
 from common.transform_utils import read_source_data, apply_target_schema, write_to_table
 from common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import col, md5, concat_ws
+from pyspark.sql.functions import col, md5, concat_ws, initcap
 from pyspark.sql.types import (
     StructType, StructField, StringType, IntegerType, BooleanType, DateType
 )
@@ -21,7 +21,7 @@ def define_target_schema():
         StructField("game_id", IntegerType()),
         StructField("team", StringType()),
         StructField("profile_id", IntegerType()),
-        StructField("civ", StringType()),
+        StructField("civ_name", StringType()),
         StructField("winner", BooleanType()),
         StructField("match_rating_diff", IntegerType()),
         StructField("new_rating", IntegerType()),
@@ -42,6 +42,9 @@ def transform_dataframe(df):
         md5(concat_ws("~"
             , col("game_id").cast("string")
             , col("profile_id").cast("string")))
+        ).withColumn(
+            "civ_name",
+            initcap(col("civ"))
         )
     return trans_df
 
