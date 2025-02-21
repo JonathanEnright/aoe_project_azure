@@ -43,3 +43,8 @@ datasource:
     container: dev/players
     suffix: 'players'
     prefix: 'players'
+
+  country_list:
+    <<: *parent_defaults
+    container: dev/country_list
+    file_name: 'country_list.csv' 
