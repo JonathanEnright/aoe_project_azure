@@ -7,7 +7,7 @@ matches:
   options: "inferSchema 'true'"
   source: 'AOESTATS_MATCHES'
   file_date: true
-  managed_table: matches_raw
+  managed_table: matches_br
 
 players:
   table: players_ext
@@ -18,7 +18,7 @@ players:
   options: "inferSchema 'true'"
   source: 'AOESTATS_PLAYERS'
   file_date: true
-  managed_table: players_raw
+  managed_table: players_br
 
 relic:
   table: relic_ext
@@ -29,4 +29,15 @@ relic:
   options: "multiline 'true'"
   source: 'RELIC_LINK_API'
   file_date: false
-  managed_table: relic_raw
+  managed_table: relic_br
+
+country_list:
+  table: country_list_ext
+  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/country_list/"
+  format: csv
+  catalog: "aoe_dev"
+  database: "bronze"
+  options: "header 'true'"
+  source: 'LOOKUP_DATA'
+  file_date: false
+  managed_table: country_list_br
