@@ -65,7 +65,7 @@ def main():
     """
     target_schema = define_target_schema()
     df = generate_dim_date(spark)
-    final_df = apply_target_schema(df, target_schema)
+    final_df = apply_target_schema(df, target_schema, spark)
     write_to_table(final_df, TARGET_TABLE)
     logger.info(f"Script '{os.path.basename(__file__)}' complete.")
         

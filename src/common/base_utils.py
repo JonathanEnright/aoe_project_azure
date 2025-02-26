@@ -89,9 +89,9 @@ def timer(func):
     """A simple timer decorator to record how long a function took to run."""
 
     def wrapper(*args, **kwargs):
-        start_time = time.time()
+        start_time = time.perf_counter()
         result = func(*args, **kwargs)
-        end_time = time.time()
+        end_time = time.perf_counter()
         elapsed_time = end_time - start_time
         logger.info(
             f"Function '{func.__name__}' took {elapsed_time:.1f} seconds to run."
