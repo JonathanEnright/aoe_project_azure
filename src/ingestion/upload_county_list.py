@@ -1,7 +1,7 @@
-from common.base_utils import Config, Datasource, timer, create_adls2_session
-from common.load_utils import upload_to_adls2
+from src.common.base_utils import Config, Datasource, timer, create_adls2_session
+from src.common.load_utils import upload_to_adls2
 from pathlib import Path
-from common.logging_config import setup_logging
+from src.common.logging_config import setup_logging
 
 YAML_KEY = "country_list"
 yaml_fn = "config.yaml"

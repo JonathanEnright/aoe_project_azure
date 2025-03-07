@@ -15,3 +15,9 @@ tree.py
 DIRECTORY_TREE.md
 setup.py
 todo.txt
+pat.txt
+testapi.py
+load_file_to_databricks.py
+basic_file.py
+install_aoe_azure.sh
+databricks_example_job.json

@@ -1,7 +1,7 @@
 from pyspark.sql.functions import col, coalesce, lit, current_date
-from common.base_utils import create_databricks_session
-from common.transform_utils import upsert_to_table, read_source_data, write_to_table
-from common.logging_config import setup_logging
+from src.common.base_utils import create_databricks_session
+from src.common.transform_utils import upsert_to_table, read_source_data, write_to_table
+from src.common.logging_config import setup_logging
 import os
 
 logger = setup_logging()

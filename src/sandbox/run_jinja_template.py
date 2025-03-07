@@ -1,11 +1,11 @@
 # Step0: Import jinia & all modules to be used in any of the transformation scripts.
 import os
 from jinja2 import Environment, FileSystemLoader, pass_context
-from common.base_utils import create_databricks_session
+from src.common.base_utils import create_databricks_session
 from pyspark.sql.functions import col, to_timestamp, to_date
-from common.base_utils import create_databricks_session
-from common.transform_utils import read_source_data, write_to_table
-from common.logging_config import setup_logging
+from src.common.base_utils import create_databricks_session
+from src.common.transform_utils import read_source_data, write_to_table
+from src.common.logging_config import setup_logging
 
 logger = setup_logging()
 
@@ -31,6 +31,8 @@ table_lookup = {
         'catalog': dev_env_catalog         
     }
 }
+
+transformed_df = {}
 
 # Mock chosing to run a speicified table.
 example_target = table_lookup['example_script']

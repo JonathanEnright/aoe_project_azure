@@ -1,9 +1,9 @@
-from common.base_utils import Config, Datasource, timer, fetch_api_json, create_adls2_session
-from common.extract_utils import validate_json_schema
-from common.pydantic_models import ApiSchema
-from common.load_utils import load_json_data
+from src.common.base_utils import Config, Datasource, timer, fetch_api_json, create_adls2_session
+from src.common.extract_utils import validate_json_schema
+from src.common.pydantic_models import ApiSchema
+from src.common.load_utils import load_json_data
 from pathlib import Path
-from common.logging_config import setup_logging
+from src.common.logging_config import setup_logging
 
 YAML_KEY = "metadata"
 yaml_fn = "config.yaml"
