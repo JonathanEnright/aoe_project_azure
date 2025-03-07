@@ -1,7 +1,7 @@
 from pyspark.sql.functions import col, coalesce, lit
-from common.base_utils import create_databricks_session
-from common.transform_utils import write_to_table, read_source_data
-from common.logging_config import setup_logging
+from src.common.base_utils import create_databricks_session
+from src.common.transform_utils import write_to_table, read_source_data
+from src.common.logging_config import setup_logging
 import os
 
 logger = setup_logging()

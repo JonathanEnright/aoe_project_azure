@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
-from common.base_utils import load_yaml_data, create_databricks_session
-from common.transform_utils import create_external_table, add_metadata_columns, write_to_table
+from src.common.base_utils import load_yaml_data, create_databricks_session
+from src.common.transform_utils import create_external_table, add_metadata_columns, write_to_table
 
 def bronze_pipeline(yaml_key, logger):
     """

@@ -2,7 +2,7 @@ import logging
 import time
 from datetime import timedelta
 from pydantic import ValidationError
-from common.base_utils import fetch_api_json
+from src.common.base_utils import fetch_api_json
 import pandas as pd
 
 logger = logging.getLogger(__name__)
@@ -85,3 +85,5 @@ def create_stats_endpoints(extract_file: str, weekly_querys: list):
         endpoints.append({"file_date": result_dated, "endpoint_str": result_query})
     logger.info(f"{len(endpoints)} found.")
     return endpoints
+
+print('done jono')

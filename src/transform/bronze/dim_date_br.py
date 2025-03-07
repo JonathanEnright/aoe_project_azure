@@ -1,8 +1,8 @@
 import pandas as pd
 from datetime import datetime
-from common.base_utils import create_databricks_session
-from common.transform_utils import apply_target_schema, write_to_table
-from common.logging_config import setup_logging
+from src.common.base_utils import create_databricks_session
+from src.common.transform_utils import apply_target_schema, write_to_table
+from src.common.logging_config import setup_logging
 import os
 from pyspark.sql.types import (
     StructType, StructField, IntegerType, BooleanType, DateType

@@ -1,5 +1,5 @@
-from common.base_utils import Config, Datasource, timer, fetch_api_file, create_adls2_session
-from common.extract_utils import (
+from src.common.base_utils import Config, Datasource, timer, fetch_api_file, create_adls2_session
+from src.common.extract_utils import (
     generate_weekly_queries,
     create_stats_endpoints,
     validate_parquet_schema,

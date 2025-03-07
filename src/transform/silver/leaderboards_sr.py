@@ -1,6 +1,6 @@
-from common.base_utils import create_databricks_session
-from common.transform_utils import read_source_data, apply_target_schema, write_to_table, deduplicate_by_key
-from common.logging_config import setup_logging
+from src.common.base_utils import create_databricks_session
+from src.common.transform_utils import read_source_data, apply_target_schema, write_to_table, deduplicate_by_key
+from src.common.logging_config import setup_logging
 import os
 from pyspark.sql.functions import col, explode, to_timestamp
 from pyspark.sql.types import (

@@ -1,9 +1,9 @@
-from common.base_utils import Config, Datasource, timer, create_adls2_session
-from common.extract_utils import validate_json_schema, fetch_relic_chunk
-from common.pydantic_models import RelicResponse
-from common.load_utils import load_json_data
+from src.common.base_utils import Config, Datasource, timer, create_adls2_session
+from src.common.extract_utils import validate_json_schema, fetch_relic_chunk
+from src.common.pydantic_models import RelicResponse
+from src.common.load_utils import load_json_data
 from pathlib import Path
-from common.logging_config import setup_logging
+from src.common.logging_config import setup_logging
 
 YAML_KEY = "relic"
 yaml_fn = "config.yaml"

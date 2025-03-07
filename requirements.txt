@@ -1,0 +1,12 @@
+azure-functions
+azure-storage-blob
+azure-identity
+pydantic==2.9.2
+pytest==7.4.0
+python-dotenv==1.0.1
+PyYAML==6.0.2
+Requests==2.32.3
+numpy==2.0 
+pandas==2.2.2 
+pyarrow==18.0.0 
+fastparquet==2024.5.0
