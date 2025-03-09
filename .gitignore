@@ -21,3 +21,6 @@ load_file_to_databricks.py
 basic_file.py
 install_aoe_azure.sh
 databricks_example_job.json
+archive_old
+build
+dist

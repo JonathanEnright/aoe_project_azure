@@ -1,0 +1,27 @@
+job_name: Test_ingestion
+
+schedule:
+  cron_expression: "0 30 2 ? * MON"
+  timezone_id: UTC
+
+notifications:
+  on_start:
+    - "jonathan.enright@live.com.au"
+
+parameters:
+  timeout_seconds: 540
+
+tasks:
+  - task_key: task_elt_metadata
+    description: Run elt_metadata
+    entry_point: elt_metadata
+    
+  - task_key: task_elt_stat_matches
+    description: Run elt_stat_matches
+    entry_point: elt_stat_matches
+    depends_on: [task_elt_metadata]
+    
+  - task_key: task_elt_stat_players
+    description: Run elt_stat_players
+    entry_point: elt_stat_players
+    depends_on: [task_elt_metadata]

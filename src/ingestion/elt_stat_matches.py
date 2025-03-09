@@ -4,10 +4,10 @@ from src.common.extract_utils import (
     create_stats_endpoints,
     validate_parquet_schema,
 )
-from common.pydantic_models import Matches
-from common.load_utils import load_parquet_data
+from src.common.pydantic_models import Matches
+from src.common.load_utils import load_parquet_data
 from pathlib import Path
-from common.logging_config import setup_logging
+from src.common.logging_config import setup_logging
 
 YAML_KEY = "matches"
 yaml_fn = "config.yaml"

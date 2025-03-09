@@ -85,5 +85,3 @@ def create_stats_endpoints(extract_file: str, weekly_querys: list):
         endpoints.append({"file_date": result_dated, "endpoint_str": result_query})
     logger.info(f"{len(endpoints)} found.")
     return endpoints
-
-print('done jono')
