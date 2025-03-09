@@ -1,7 +1,7 @@
 job_name: Test_ingestion
 
 schedule:
-  cron_expression: "0 30 2 ? * MON"
+  cron_expression: "0 07 22 ? * SUN"
   timezone_id: UTC
 
 notifications:

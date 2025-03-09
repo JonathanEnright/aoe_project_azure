@@ -1,8 +1,8 @@
 from pathlib import Path
-from deploy import DeploymentConfig, deploy_pipeline, load_pipeline_config
+from src.orchestration.deploy import DeploymentConfig, deploy_pipeline, load_pipeline_config
 
 def main():
-    script_dir = Path(__file__).resolve().parent
+    script_dir = Path(__file__).resolve().parent.parent
     yaml_config = script_dir / "pipelines" / "ingestion.yaml"
     pipeline_config = load_pipeline_config(str(yaml_config))
 
