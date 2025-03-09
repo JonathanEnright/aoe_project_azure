@@ -1,6 +1,6 @@
 azure-functions
 azure-storage-blob
-azure-identity
+azure-identity==1.19.0
 pydantic==2.9.2
 pytest==7.4.0
 python-dotenv==1.0.1
