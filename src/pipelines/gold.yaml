@@ -1,0 +1,34 @@
+job_name: Run_Gold
+
+schedule:
+  cron_expression: "0 07 22 ? * SUN"
+  timezone_id: UTC
+
+notifications:
+  on_start:
+    - "jonathan.enright@live.com.au"
+
+parameters:
+  timeout_seconds: 1200
+
+tasks:
+  - task_key: task_dim_civ_gd
+    description: Run dim_civ_gd
+    entry_point: dim_civ_gd
+    
+  - task_key: task_dim_date_gd
+    description: Run dim_date_gd
+    entry_point: dim_date_gd
+
+  - task_key: task_dim_match_gd
+    description: Run dim_match_gd
+    entry_point: dim_match_gd
+  
+  - task_key: task_dim_player_gd
+    description: Run dim_player_gd
+    entry_point: dim_player_gd
+
+  - task_key: task_fact_player_matches_gd
+    description: Run fact_player_matches_gd
+    entry_point: fact_player_matches_gd
+    depends_on: [task_dim_civ_gd, task_dim_date_gd, task_dim_match_gd, task_dim_player_gd]

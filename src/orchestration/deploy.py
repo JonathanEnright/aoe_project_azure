@@ -69,9 +69,11 @@ class DatabricksDeployer:
 
     def build_wheel(self) -> Path:
         logger.info("Building the Python wheel package locally...")
+        project_root = Path(__file__).resolve().parents[2]
         shutil.rmtree(self.config.local_wheel_dir, ignore_errors=True)
         subprocess.run(
             ["python", "setup.py", "bdist_wheel", "-d", self.config.local_wheel_dir],
+            cwd=project_root,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.STDOUT,
             check=True
@@ -142,7 +144,14 @@ class DatabricksDeployer:
             logger.info(f"Job '{self.config.job_name}' (Job ID: {job_id}) updated successfully.")
         else:
             # Create new job
-            response = self.client.jobs.create(**job_settings.as_dict())
+            response = self.client.jobs.create(
+                name=job_settings.name,
+                tasks=job_settings.tasks,
+                schedule=job_settings.schedule,
+                email_notifications=job_settings.email_notifications,
+                timeout_seconds=job_settings.timeout_seconds
+            )
+
             job_id = response.job_id
             logger.info(f"New job '{self.config.job_name}' created successfully (Job ID: {job_id}).")
 

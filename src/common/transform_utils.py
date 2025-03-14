@@ -151,12 +151,20 @@ def upsert_to_table(spark, df, table_name, pk, partition_col=None):
             .execute()
         )
 
-        # Extract metrics from the returned DataFrame (it's a single-row DataFrame)
-        metrics = merge_result.first().asDict()
-        print(metrics)
-
-        # Extract relevant metrics
-        num_inserted = metrics.get("num_inserted_rows", 0)
-        num_updated = metrics.get("num_updated_rows", 0)
-        logger.info(f"Table '{table_name}' has been upserted (merge completed).")
-        logger.info(f"Upsert Metrics - Inserted: {num_inserted}, Updated: {num_updated}")
+        # Check if merge_result is None (table creation)
+        if merge_result is not None:
+            # Extract metrics from the returned DataFrame (it's a single-row DataFrame)
+            metrics = merge_result.first().asDict()
+            print(metrics)
+            # Extract relevant metrics
+            num_inserted = metrics.get("num_inserted_rows", 0)
+            num_updated = metrics.get("num_updated_rows", 0)
+            logger.info(f"Table '{table_name}' has been upserted (merge completed).")
+            logger.info(f"Upsert Metrics - Inserted: {num_inserted}, Updated: {num_updated}")
+        else:
+            # Handle the case where the table was just created (no actual merge)
+            # We get the count of the dataframe, which is the same number inserted
+            num_inserted = df.count()
+            num_updated = 0
+            logger.info(f"Table '{table_name}' has been upserted (first insert).")
+            logger.info(f"Upsert Metrics - Inserted: {num_inserted}, Updated: {num_updated}")

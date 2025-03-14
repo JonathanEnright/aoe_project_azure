@@ -1,0 +1,48 @@
+job_name: Run_Silver
+
+schedule:
+  cron_expression: "0 07 22 ? * SUN"
+  timezone_id: UTC
+
+notifications:
+  on_start:
+    - "jonathan.enright@live.com.au"
+
+parameters:
+  timeout_seconds: 1200
+
+tasks:
+  - task_key: task_dim_date_sr
+    description: Run dim_date_sr
+    entry_point: dim_date_sr
+    
+  - task_key: task_leaderboards_sr
+    description: Run leaderboards_sr
+    entry_point: leaderboards_sr
+
+  - task_key: task_matches_sr
+    description: Run matches_sr
+    entry_point: matches_sr
+  
+  - task_key: task_players_sr
+    description: Run players_sr
+    entry_point: players_sr
+
+  - task_key: task_statgroup_sr
+    description: Run statgroup_sr
+    entry_point: statgroup_sr
+
+  - task_key: task_matches_s2r
+    description: Run matches_s2r
+    entry_point: matches_s2r
+    depends_on: [task_matches_sr]
+
+  - task_key: task_player_leaderboard_stats_s2r
+    description: Run player_leaderboard_stats_s2r
+    entry_point: player_leaderboard_stats_s2r
+    depends_on: [task_statgroup_sr]
+
+  - task_key: task_players_s2r
+    description: Run players_s2r
+    entry_point: players_s2r
+    depends_on: [task_players_sr]
