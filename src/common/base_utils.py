@@ -10,6 +10,7 @@ import logging
 from azure.identity import ClientSecretCredential
 from databricks.connect.session import DatabricksSession
 from databricks.sdk.core import Config as DBX_Config
+from pyspark.sql import SparkSession
 
 
 logger = logging.getLogger(__name__)
@@ -151,11 +152,14 @@ def create_databricks_session(
     Optional: to specify catalog or schema.
     Returns: A databricks pyspark session object.
     """
-    
-    profile=os.getenv("DATABRICKS_PROFILE")
-    cluster_id=os.getenv("DATABRICKS_CLUSTER_ID")
-    dbx_session = DBX_Config(profile=profile, cluster_id=cluster_id)
-    spark = DatabricksSession.builder.sdkConfig(dbx_session).getOrCreate()
+    if os.getenv("DATABRICKS_RUNTIME_VERSION"):
+        # Running within a Databricks cluster
+        spark = SparkSession.builder.getOrCreate()
+    else:    
+        profile=os.getenv("DATABRICKS_PROFILE")
+        cluster_id=os.getenv("DATABRICKS_CLUSTER_ID")
+        dbx_session = DBX_Config(profile=profile, cluster_id=cluster_id)
+        spark = DatabricksSession.builder.sdkConfig(dbx_session).getOrCreate()
     try:
         spark.catalog.setCurrentCatalog(catalog)
         spark.catalog.setCurrentDatabase(schema)

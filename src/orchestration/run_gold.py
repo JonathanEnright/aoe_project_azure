@@ -1,6 +1,6 @@
 from src.orchestration.deploy_runner import deploy_pipeline_from_yaml
 
-pipeline = 'ingestion'
+pipeline = 'gold'
 
 def main():
     deploy_pipeline_from_yaml(pipeline)

@@ -1,7 +1,19 @@
 import os
+import sys
+import time
 from dotenv import dotenv_values
+from dotenv import load_dotenv, set_key
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.compute import AzureAttributes, DataSecurityMode, RuntimeEngine, AzureAvailability, Library, PythonPyPiLibrary
+
+# Prompt the user for confirmation
+user_input = input("This script create a Databricks cluster and install libraries on it. "
+"To apply changes you will need to close and re-open the terminal. "
+"Do you want to proceed? (yes/no): ").strip().lower()
+
+if user_input != "yes":
+    print("Script execution canceled.")
+    sys.exit(0)
 
 # Load environment variables from your .env file
 env_vars = dotenv_values('.env')
@@ -14,7 +26,7 @@ client = WorkspaceClient(
 
 # Define the cluster configuration as a dictionary
 cluster_config = {
-    "cluster_name": "Aoe_Project_Cluster",
+    "cluster_name": "Aoe_Project_Cluster_5",
     "spark_version": "15.4.x-scala2.12",
     "spark_conf": {
         "spark.master": "local[*, 4]",
@@ -47,6 +59,8 @@ try:
     cluster_response = client.clusters.create(**cluster_config)
     id = cluster_response.cluster_id
     print(f"Cluster created successfully! Cluster ID: {id}")
+    # Update the .env file with the new cluster ID
+    set_key('.env', 'DATABRICKS_CLUSTER_ID', id)
 except Exception as e:
     print(f"Error creating cluster: {e}")
 
@@ -55,7 +69,8 @@ libraries = [
     Library(pypi=PythonPyPiLibrary(package="pydantic==2.6.2")),
     Library(pypi=PythonPyPiLibrary(package="azure-storage-file-datalake")),
     Library(pypi=PythonPyPiLibrary(package="python-dotenv")),
-    Library(pypi=PythonPyPiLibrary(package="azure-identity==1.19.0"))
+    Library(pypi=PythonPyPiLibrary(package="azure-identity==1.19.0")),
+    Library(pypi=PythonPyPiLibrary(package="databricks-sdk==0.29.0"))
 ]
 
 # Install the libraries on the cluster
@@ -64,3 +79,9 @@ try:
     print("Libraries installed successfully.")
 except Exception as e:
     print(f"Error installing libraries: {e}")
+
+# Reload the environment variables to ensure the updated DATABRICKS_CLUSTER_ID is used
+load_dotenv('.env')
+
+# Success message
+print("Script completed successfully. You will need to close this terminal to apply changes.")

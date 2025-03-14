@@ -51,6 +51,7 @@ def transform_dataframe(player_match_sr,
         ).select(
             col("pm.id").alias("fact_pk"),
             col("dp.player_pk").alias("player_fk"),
+            col("dm.match_pk").alias("match_fk"),
             col("dc.civ_pk").alias("civ_fk"),
             col("dd.date_pk").alias("date_fk"),
             col("pm.team"),
