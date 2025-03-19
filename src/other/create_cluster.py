@@ -36,7 +36,7 @@ cluster_config = {
         first_on_demand=1,
         availability=AzureAvailability.ON_DEMAND_AZURE, 
         spot_bid_max_price=-1
-    ),  # Convert AzureAttributes to dict
+    ),
     "node_type_id": "Standard_DS3_v2",
     "driver_node_type_id": "Standard_DS3_v2",
     "custom_tags": {
