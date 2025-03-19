@@ -3,3 +3,4 @@ pandas
 azure-identity
 azure-storage-file-datalake
 dotenv
+-e .
