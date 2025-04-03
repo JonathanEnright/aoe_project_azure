@@ -1,13 +1,12 @@
 # --------------------------------------------------------------------------
 # Set all defaults
 set_defaults: &parent_defaults
-  backdate_days_start: 20
-  backdate_days_end: 1
+  backdate_days_start: 30
+  backdate_days_end: 10
   target_run_date: ~
   target_run_end_date: ~
   date_format: '%Y-%m-%d'
   storage_account: jonoaoedlext 
-  container: dev
   base_url: https://aoestats.io
   dir_url: '/media/db_dumps/date_range%3D'
   params: ~
@@ -16,13 +15,13 @@ set_defaults: &parent_defaults
 datasource:
   metadata:
     <<: *parent_defaults
-    container: dev/meta
+    container_suffix: meta
     endpoint: '/api/db_dumps.json'
     suffix: metadata
 
   relic:
     <<: *parent_defaults
-    container: dev/rl_api
+    container_suffix: rl_api
     base_url: https://aoe-api.worldsedgelink.com
     endpoint: '/community/leaderboard/getLeaderBoard2?'
     suffix: relic
@@ -34,17 +33,17 @@ datasource:
 
   matches:
     <<: *parent_defaults
-    container: dev/matches
+    container_suffix: 'matches'
     suffix: 'matches'
     prefix: 'matches'
 
   players:
     <<: *parent_defaults
-    container: dev/players
+    container_suffix: players
     suffix: 'players'
     prefix: 'players'
 
   country_list:
     <<: *parent_defaults
-    container: dev/country_list
+    container_suffix: country_list
     file_name: 'country_list.csv' 

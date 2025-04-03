@@ -1,6 +1,6 @@
 matches:
   table: matches_ext
-  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/matches/"
+  adls_location: "jonoaoedlext.dfs.core.windows.net/matches/"
   format: parquet
   catalog: "aoe_dev"
   database: "bronze"
@@ -11,7 +11,7 @@ matches:
 
 players:
   table: players_ext
-  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/players/"
+  adls_location: "jonoaoedlext.dfs.core.windows.net/players/"
   format: parquet
   catalog: "aoe_dev"
   database: "bronze"
@@ -22,7 +22,7 @@ players:
 
 relic:
   table: relic_ext
-  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/rl_api/"
+  adls_location: "jonoaoedlext.dfs.core.windows.net/rl_api/"
   format: json
   catalog: "aoe_dev"
   database: "bronze"
@@ -33,7 +33,7 @@ relic:
 
 country_list:
   table: country_list_ext
-  location: "abfss://dev@jonoaoedlext.dfs.core.windows.net/country_list/"
+  adls_location: "jonoaoedlext.dfs.core.windows.net/country_list/"
   format: csv
   catalog: "aoe_dev"
   database: "bronze"

@@ -18,23 +18,24 @@ from pyspark.sql.functions import (
 )
 
 from src.common.base_utils import create_adls2_session, create_databricks_session
+from src.common.env_setting import EnvConfig
 from src.common.load_utils import upload_to_adls2
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data
 
 logger = setup_logging()
 
-fact_table = "aoe_dev.gold.fact_player_matches_gd"
-match_table = "aoe_dev.gold.dim_match_gd"
-civ_table = "aoe_dev.gold.dim_civ_gd"
+fact_table = f"{EnvConfig.CATALOG_NAME}.gold.fact_player_matches_gd"
+match_table = f"{EnvConfig.CATALOG_NAME}.gold.dim_match_gd"
+civ_table = f"{EnvConfig.CATALOG_NAME}.gold.dim_civ_gd"
 
 STORAGE_ACCOUNT = "jonoaoedlext"
-CONTAINER = "dev"
+CONTAINER = EnvConfig.ENV_NAME
 DATA_ENVIRONMENT = "consumption"
 TARGET_TABLE = "vw_opponent_civ_analysis"
 
 
-spark = create_databricks_session(catalog="aoe_dev", schema="gold")
+spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema="gold")
 
 
 def transform_dataframe(fact_table, match_table, civ_table):

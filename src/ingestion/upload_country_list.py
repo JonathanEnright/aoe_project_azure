@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.common.base_utils import Config, Datasource, create_adls2_session, timer
+from src.common.env_setting import EnvConfig
 from src.common.load_utils import upload_to_adls2
 from src.common.logging_config import setup_logging
 
@@ -21,13 +22,14 @@ def main(*args, **kwargs):
     # Setup:
     adls2 = create_adls2_session()
     ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
+    _container = f"{EnvConfig.ENV_NAME}/{ds.container_suffix}"
 
     # Extract phase
     with open(CSV_FILE, "r") as f:
         data = f.read()
 
     # Load phase
-    upload_to_adls2(adls2, data, ds.storage_account, ds.container, ds.file_name)
+    upload_to_adls2(adls2, data, ds.storage_account, _container, ds.file_name)
     logger.info(f"Script '{Path(__file__).stem}' finished!")
 
 
