@@ -1,7 +1,7 @@
 name: CD Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -12,8 +12,27 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.4'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install setuptools wheel
+          pip install -r requirements.txt 
+
+      - name: Install project
+        run: |
+          pip install -e .
+
       - name: Run Databricks Job for Prod
         env:
           CATALOG_ENV: PROD
+          DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID }}
+          DATABRICKS_HOST_URL: ${{ secrets.DATABRICKS_HOST_URL }}
+          DATABRICKS_PAT: ${{ secrets.DATABRICKS_PAT }}
         run: |
-          python src/orchestration/run_all.py
+          python -m src.orchestration.run_all
+          
