@@ -12,9 +12,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Install project
-        run: |
-          pip install -e .
+      # - name: Install project
+      #   run: |
+      #     pip install -e .
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,6 +26,10 @@ jobs:
           pip install --upgrade pip
           pip install setuptools wheel
           pip install -r requirements.txt 
+
+      - name: Set PYTHONPATH
+        run: |
+          echo "PYTHONPATH=${GITHUB_WORKSPACE}/src" >> $GITHUB_ENV
 
       - name: Run Databricks Job for Prod
         env:
