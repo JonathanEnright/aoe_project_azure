@@ -1,29 +1,33 @@
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import read_source_data, upsert_to_table
-from src.common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import current_date, col, md5, concat_ws
+
+from pyspark.sql.functions import col, current_date
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import read_source_data, upsert_to_table
 
 logger = setup_logging()
 
 # Define table names and spark context
-SOURCE_TABLE = "silver.dim_date_sr" 
+SOURCE_TABLE = "silver.dim_date_sr"
 TARGET_TABLE = "gold.dim_date_gd"
-spark = create_databricks_session(catalog='aoe_dev', schema='silver')
-pk = 'date_pk'
+spark = create_databricks_session(catalog="aoe_dev", schema="silver")
+pk = "date_pk"
+
 
 def transform_dataframe(df):
     logger.info("Dim Date: applying transformation steps.")
 
     # Assuming df is your input DataFrame
-    trans_df = df.select(col("date_pk"),
+    trans_df = df.select(
+        col("date_pk"),
         col("date"),
         col("year"),
         col("month"),
         col("day"),
         col("day_of_week"),
         col("is_weekend"),
-        current_date().alias("load_date")
+        current_date().alias("load_date"),
     )
     return trans_df
 

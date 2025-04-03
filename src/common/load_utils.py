@@ -1,5 +1,6 @@
-import logging
 import io
+import logging
+
 from azure.storage.filedatalake import DataLakeServiceClient
 
 logger = logging.getLogger(__name__)
@@ -24,8 +25,8 @@ def load_parquet_data(data, file_dir, fn, storage_account, adls2):
 def upload_to_adls2(adls2, data, storage_account, container, file_path):
     try:
         adls2_client = DataLakeServiceClient(
-            account_url=f'https://{storage_account}.dfs.core.windows.net',
-            credential=adls2
+            account_url=f"https://{storage_account}.dfs.core.windows.net",
+            credential=adls2,
         )
         file_system_client = adls2_client.get_file_system_client(file_system=container)
         file_client = file_system_client.get_file_client(file_path)

@@ -12,9 +12,9 @@ NANOS_TO_SECS = 1_000_000_000
 
 transformed_df = (
     df.withColumn("game_duration_secs", col("duration") / NANOS_TO_SECS)
-        .withColumn("actual_duration_secs", col("irl_duration") / NANOS_TO_SECS)
-        .withColumn("ts_seconds", col("started_timestamp") / float(NANOS_TO_SECS))
-        .withColumn("game_started_timestamp", to_timestamp(col("ts_seconds")))
-        .withColumn("game_date", to_date(col("game_started_timestamp")))
-        .filter(col("leaderboard") == 'random_map')
+    .withColumn("actual_duration_secs", col("irl_duration") / NANOS_TO_SECS)
+    .withColumn("ts_seconds", col("started_timestamp") / float(NANOS_TO_SECS))
+    .withColumn("game_started_timestamp", to_timestamp(col("ts_seconds")))
+    .withColumn("game_date", to_date(col("game_started_timestamp")))
+    .filter(col("leaderboard") == "random_map")
 )

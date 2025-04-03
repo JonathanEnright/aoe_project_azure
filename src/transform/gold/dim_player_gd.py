@@ -1,29 +1,34 @@
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import read_source_data, upsert_to_table
-from src.common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import current_date, col, md5, concat_ws
+
+from pyspark.sql.functions import col, concat_ws, current_date, md5
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import read_source_data, upsert_to_table
 
 logger = setup_logging()
 
 # Define table names and spark context
-SOURCE_TABLE = "silver.player_leaderboard_stats_s2r" 
+SOURCE_TABLE = "silver.player_leaderboard_stats_s2r"
 TARGET_TABLE = "gold.dim_player_gd"
-spark = create_databricks_session(catalog='aoe_dev', schema='silver')
-pk = 'player_pk'
+spark = create_databricks_session(catalog="aoe_dev", schema="silver")
+pk = "player_pk"
+
 
 def transform_dataframe(df):
     logger.info("Players: applying transformation steps.")
 
     trans_df = df.withColumn(
-            "player_pk",
-            md5(concat_ws("~"
-                , col("profile_id").cast("string")
-                , col("source").cast("string")))
+        "player_pk",
+        md5(
+            concat_ws(
+                "~", col("profile_id").cast("string"), col("source").cast("string")
+            )
+        ),
     ).select(
         col("player_pk"),
-        col("profile_id"), 
-        col("gaming_name"), 
+        col("profile_id"),
+        col("gaming_name"),
         col("country_code"),
         col("country_name"),
         col("statgroup_id"),
@@ -33,7 +38,7 @@ def transform_dataframe(df):
         col("current_rating"),
         col("last_match_date"),
         current_date().alias("load_date"),
-        col("source")
+        col("source"),
     )
     return trans_df
 

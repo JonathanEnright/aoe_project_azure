@@ -6,8 +6,12 @@ pytest==7.4.0
 python-dotenv==1.0.1
 PyYAML==6.0.2
 Requests==2.32.3
-numpy==2.0 
+numpy==1.24.3
 pandas==2.2.2 
 pyarrow==18.0.0 
 fastparquet==2024.5.0
 streamlit
+ruff
+databricks-connect==15.4.0
+setuptools
+wheel

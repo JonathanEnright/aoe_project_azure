@@ -1,0 +1,15 @@
+line-length = 150
+
+ignore = [
+    "E712"
+    ,"F811"
+    ,"E722" #ignore bare except
+    ]
+[lint]
+# Enable rule sets
+select = ["E", "F", "W", "I"]
+
+exclude = [
+    "src/sandbox/example_script.py",
+]
+

@@ -1,34 +1,47 @@
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import read_source_data, apply_target_schema, write_to_table
-from src.common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import col, md5, concat_ws, initcap
+
+from pyspark.sql.functions import col, concat_ws, initcap, md5
 from pyspark.sql.types import (
-    StructType, StructField, StringType, IntegerType, BooleanType, DateType
+    BooleanType,
+    DateType,
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+)
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import (
+    apply_target_schema,
+    read_source_data,
+    write_to_table,
 )
 
 logger = setup_logging()
 
 # Define table names and spark context
-SOURCE_TABLE = "bronze.players_br" 
+SOURCE_TABLE = "bronze.players_br"
 TARGET_TABLE = "silver.players_sr"
-spark = create_databricks_session(catalog='aoe_dev', schema='bronze')
+spark = create_databricks_session(catalog="aoe_dev", schema="bronze")
 
 
 def define_target_schema():
-    schema = StructType([
-        StructField("id", StringType(), False),
-        StructField("game_id", IntegerType()),
-        StructField("team", StringType()),
-        StructField("profile_id", IntegerType()),
-        StructField("civ_name", StringType()),
-        StructField("winner", BooleanType()),
-        StructField("match_rating_diff", IntegerType()),
-        StructField("new_rating", IntegerType()),
-        StructField("old_rating", IntegerType()),
-        StructField("source", StringType()),
-        StructField("file_date", DateType())
-    ])
+    schema = StructType(
+        [
+            StructField("id", StringType(), False),
+            StructField("game_id", IntegerType()),
+            StructField("team", StringType()),
+            StructField("profile_id", IntegerType()),
+            StructField("civ_name", StringType()),
+            StructField("winner", BooleanType()),
+            StructField("match_rating_diff", IntegerType()),
+            StructField("new_rating", IntegerType()),
+            StructField("old_rating", IntegerType()),
+            StructField("source", StringType()),
+            StructField("file_date", DateType()),
+        ]
+    )
     return schema
 
 
@@ -39,13 +52,12 @@ def transform_dataframe(df):
     # Compute ID using md5 of the concatenation of game_id and profile_id (with '~' separator).
     trans_df = filtered_df.withColumn(
         "id",
-        md5(concat_ws("~"
-            , col("game_id").cast("string")
-            , col("profile_id").cast("string")))
-        ).withColumn(
-            "civ_name",
-            initcap(col("civ"))
-        )
+        md5(
+            concat_ws(
+                "~", col("game_id").cast("string"), col("profile_id").cast("string")
+            )
+        ),
+    ).withColumn("civ_name", initcap(col("civ")))
     return trans_df
 
 
