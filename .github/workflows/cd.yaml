@@ -35,6 +35,4 @@ jobs:
           DATABRICKS_PAT: ${{ secrets.DATABRICKS_PAT }}
         run: |
           python -m src.orchestration.run_all
-
-
           
