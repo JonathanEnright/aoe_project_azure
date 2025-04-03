@@ -3,6 +3,7 @@ import os
 from pyspark.sql.functions import col, current_date
 
 from src.common.base_utils import create_databricks_session
+from src.common.dq_rules import DQRules
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
 
@@ -59,15 +60,25 @@ def transform_dataframe(player_match_sr, dim_civ, dim_match, dim_player, dim_dat
     return trans_df
 
 
+def dq_checks(df):
+    logger.info("Running data quality checks")
+    DQRules.check_nulls(df, [pk])
+    DQRules.check_unique(df, [pk])
+    DQRules.check_non_empty(df)
+    logger.info("All dq rules passed!")
+
+
 def main():
     """
     Main ETL workflow:
       1. Apply transformations.
-      2. Write the final data to the target table.
+      2. Pass DQ checks
+      3. Write the final data to the target table.
     """
     trans_df = transform_dataframe(
         player_match_sr, dim_civ, dim_match, dim_player, dim_date
     )
+    dq_checks(trans_df)
     upsert_to_table(spark, trans_df, TARGET_TABLE, pk, partition_col=None)
     # write_to_table(trans_df, TARGET_TABLE)
     logger.info(f"Script '{os.path.basename(__file__)}' complete.")

@@ -22,19 +22,6 @@ azure_logger = logging.getLogger("azure")
 # Set the logging level to WARNING to reduce verboseness
 azure_logger.setLevel(logging.WARNING)
 
-# # Load environment variables from databricks secrets
-# from pyspark.sql import SparkSession
-# from pyspark.dbutils import DBUtils
-
-# spark = SparkSession.builder.getOrCreate()  # dbutils requires a SparkSession to be created
-# dbutils = DBUtils(spark)
-
-# # Load environment variables from Databricks secrets
-# os.environ["AWS_ACCESS_KEY"] = dbutils.secrets.get("aoe-scope", "AWS_ACCESS_KEY")
-# os.environ["AWS_SECRET_ACCESS_KEY"] = dbutils.secrets.get("aoe-scope", "AWS_SECRET_ACCESS_KEY")
-# os.environ["AWS_REGION"] = dbutils.secrets.get("aoe-scope", "AWS_REGION")
-
-
 # -----------------------------------------------------------------------------
 # Classes
 # -----------------------------------------------------------------------------
