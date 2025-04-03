@@ -1,7 +1,7 @@
 name: CD Workflow
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -11,6 +11,17 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11.4'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install setuptools wheel
+          pip install -r requirements.txt 
 
       - name: Run Databricks Job for Prod
         env:
