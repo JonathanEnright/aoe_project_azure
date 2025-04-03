@@ -1,9 +1,11 @@
 import logging
 import time
 from datetime import timedelta
-from pydantic import ValidationError
-from src.common.base_utils import fetch_api_json
+
 import pandas as pd
+from pydantic import ValidationError
+
+from src.common.base_utils import fetch_api_json
 
 logger = logging.getLogger(__name__)
 

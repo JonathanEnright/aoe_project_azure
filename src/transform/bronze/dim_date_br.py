@@ -1,29 +1,37 @@
-import pandas as pd
-from datetime import datetime
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import apply_target_schema, write_to_table
-from src.common.logging_config import setup_logging
 import os
+from datetime import datetime
+
+import pandas as pd
 from pyspark.sql.types import (
-    StructType, StructField, IntegerType, BooleanType, DateType
+    BooleanType,
+    DateType,
+    IntegerType,
+    StructField,
+    StructType,
 )
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import apply_target_schema, write_to_table
 
 logger = setup_logging()
 START_YEAR = 2020
 END_YEAR = 2029
 TARGET_TABLE = "bronze.dim_date_br"
-spark = create_databricks_session(catalog='aoe_dev', schema='bronze')
+spark = create_databricks_session(catalog="aoe_dev", schema="bronze")
 
 
 def define_target_schema():
-    schema = StructType([
-        StructField("date", DateType()),
-        StructField("year", IntegerType()),
-        StructField("month", IntegerType()),
-        StructField("day", IntegerType()),
-        StructField("day_of_week", IntegerType()),
-        StructField("is_weekend", BooleanType())
-    ])
+    schema = StructType(
+        [
+            StructField("date", DateType()),
+            StructField("year", IntegerType()),
+            StructField("month", IntegerType()),
+            StructField("day", IntegerType()),
+            StructField("day_of_week", IntegerType()),
+            StructField("is_weekend", BooleanType()),
+        ]
+    )
     return schema
 
 
@@ -55,6 +63,7 @@ def generate_dim_date(spark):
 
     return spark_df
 
+
 def main():
     """
     Main ETL workflow:
@@ -68,7 +77,7 @@ def main():
     final_df = apply_target_schema(df, target_schema, spark)
     write_to_table(final_df, TARGET_TABLE)
     logger.info(f"Script '{os.path.basename(__file__)}' complete.")
-        
+
 
 if __name__ == "__main__":
     main()

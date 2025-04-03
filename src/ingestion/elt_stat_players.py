@@ -1,13 +1,20 @@
-from src.common.base_utils import Config, Datasource, timer, fetch_api_file, create_adls2_session
+from pathlib import Path
+
+from src.common.base_utils import (
+    Config,
+    Datasource,
+    create_adls2_session,
+    fetch_api_file,
+    timer,
+)
 from src.common.extract_utils import (
-    generate_weekly_queries,
     create_stats_endpoints,
+    generate_weekly_queries,
     validate_parquet_schema,
 )
-from src.common.pydantic_models import Players
 from src.common.load_utils import load_parquet_data
-from pathlib import Path
 from src.common.logging_config import setup_logging
+from src.common.pydantic_models import Players
 
 YAML_KEY = "players"
 yaml_fn = "config.yaml"
@@ -16,15 +23,15 @@ logger = setup_logging()
 # Get the directory of the current script
 script_dir = Path(__file__).resolve().parent
 
-YAML_CONFIG = str(script_dir/yaml_fn)
+YAML_CONFIG = str(script_dir / yaml_fn)
 
 
 @timer
 def main(*args, **kwargs):
     # Setup:
     adls2 = create_adls2_session()
-    ds = Datasource(YAML_KEY, Config(YAML_CONFIG))    
-    _validation_schema = Players    
+    ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
+    _validation_schema = Players
     _base_url = ds.base_url + ds.dir_url
 
     # Pre-extract phase
@@ -49,7 +56,7 @@ def main(*args, **kwargs):
 
         # Load phase
         load_parquet_data(validated_data, ds.container, fn, ds.storage_account, adls2)
-        logger.info(f"{i+1}/{len(endpoints)} loaded.")
+        logger.info(f"{i + 1}/{len(endpoints)} loaded.")
     logger.info(f"Script '{Path(__file__).stem}' finished!")
 
 

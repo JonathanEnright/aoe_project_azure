@@ -1,7 +1,8 @@
-from utils import Config, sf_connect
 import logging
 import os
 from pathlib import Path
+
+from utils import Config, sf_connect
 
 # Configure logging
 logging.basicConfig(
@@ -23,11 +24,11 @@ ENV = "dev"
 def update_load_master(connection, env: str, from_date: str, to_date: str):
     query = f"""
     UPDATE load_master
-    SET 
+    SET
         load_start_date = '{from_date}'
         ,load_end_date = '{to_date}'
     WHERE
-        environment = '{env}' 
+        environment = '{env}'
     ;
     """
     cursor = connection.cursor()

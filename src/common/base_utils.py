@@ -1,17 +1,18 @@
-import yaml
-from datetime import datetime, timedelta
-import requests
-import os
-from typing import Dict, Optional, BinaryIO
 import io
-import time
 import logging
+import os
+import time
+from datetime import datetime, timedelta
+from typing import BinaryIO, Dict, Optional
+
+import requests
+import yaml
+
 # from import_secrets import *
 from azure.identity import ClientSecretCredential
 from databricks.connect.session import DatabricksSession
 from databricks.sdk.core import Config as DBX_Config
 from pyspark.sql import SparkSession
-
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 azure_logger = logging.getLogger("azure")
 
 # Set the logging level to WARNING to reduce verboseness
-azure_logger.setLevel(logging.WARNING) 
+azure_logger.setLevel(logging.WARNING)
 
 # # Load environment variables from databricks secrets
 # from pyspark.sql import SparkSession
@@ -45,17 +46,18 @@ class Config:
             self.config_dict = yaml.safe_load(f)
 
         # Set defaults from the parent configuration
-        parent_defaults = self.config_dict.get('set_defaults', {})
+        parent_defaults = self.config_dict.get("set_defaults", {})
         self.run_date = self.parse_date(
-            parent_defaults.get('backdate_days_start'), 
-            parent_defaults.get('target_run_date'), 
-            parent_defaults.get('date_format')
+            parent_defaults.get("backdate_days_start"),
+            parent_defaults.get("target_run_date"),
+            parent_defaults.get("date_format"),
         )
         self.run_end_date = self.parse_date(
-            parent_defaults.get('backdate_days_end'), 
-            parent_defaults.get('target_run_end_date'), 
-            parent_defaults.get('date_format')
+            parent_defaults.get("backdate_days_end"),
+            parent_defaults.get("target_run_end_date"),
+            parent_defaults.get("date_format"),
         )
+
     @staticmethod
     def parse_date(backdate_days: int, specific_date: str, date_format: str):
         """Creates a date object on initialisation. If target_run_date is specified,
@@ -67,11 +69,12 @@ class Config:
             result = (datetime.now() - timedelta(days=backdate_days)).date()
         return result
 
+
 class Datasource:
-    def __init__(self, name, config): 
+    def __init__(self, name, config):
         self.name = name
-        datasource_config = config.config_dict['datasource'].get(name, {})
-        
+        datasource_config = config.config_dict["datasource"].get(name, {})
+
         # Dynamically set all attributes from the configuration
         for key, value in datasource_config.items():
             setattr(self, key, value)
@@ -133,12 +136,12 @@ def fetch_api_json(base_url: str, endpoint: str, params: dict) -> dict | None:
 
 
 def create_adls2_session(adls2=None):
-    if adls2 == None:
+    if adls2 is None:
         logger.info("Authenticating to ADLS2.")
         adls2 = ClientSecretCredential(
             tenant_id=os.getenv("AZURE_TENANT_ID"),
             client_id=os.getenv("AZURE_CLIENT_ID"),
-            client_secret=os.getenv("AZURE_CLIENT_SECRET")
+            client_secret=os.getenv("AZURE_CLIENT_SECRET"),
         )
     return adls2
 
@@ -146,7 +149,7 @@ def create_adls2_session(adls2=None):
 def create_databricks_session(
     catalog: str | None = os.getenv("DATABRICKS_CATALOG"),
     schema: str | None = os.getenv("DATABRICKS_SCHEMA"),
-    ) -> DatabricksSession:
+) -> DatabricksSession:
     """
     Uses environment variables (store in .env) to connect to Databricks.
     Optional: to specify catalog or schema.
@@ -155,9 +158,9 @@ def create_databricks_session(
     if os.getenv("DATABRICKS_RUNTIME_VERSION"):
         # Running within a Databricks cluster
         spark = SparkSession.builder.getOrCreate()
-    else:    
-        profile=os.getenv("DATABRICKS_PROFILE")
-        cluster_id=os.getenv("DATABRICKS_CLUSTER_ID")
+    else:
+        profile = os.getenv("DATABRICKS_PROFILE")
+        cluster_id = os.getenv("DATABRICKS_CLUSTER_ID")
         dbx_session = DBX_Config(profile=profile, cluster_id=cluster_id)
         spark = DatabricksSession.builder.sdkConfig(dbx_session).getOrCreate()
     try:
@@ -173,5 +176,7 @@ def load_yaml_data(yaml_file, yaml_key):
     with open(yaml_file, "r") as f:
         ext_config = yaml.safe_load(f)
     cfg = ext_config.get(yaml_key)
-    logger.info(f"Successfully loaded '{yaml_key}' dict values from '{os.path.basename(yaml_file)}'!")
+    logger.info(
+        f"Successfully loaded '{yaml_key}' dict values from '{os.path.basename(yaml_file)}'!"
+    )
     return cfg

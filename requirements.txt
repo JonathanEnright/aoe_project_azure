@@ -11,3 +11,4 @@ pandas==2.2.2
 pyarrow==18.0.0 
 fastparquet==2024.5.0
 streamlit
+ruff

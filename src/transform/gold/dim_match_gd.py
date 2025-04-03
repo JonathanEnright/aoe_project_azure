@@ -1,29 +1,32 @@
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import read_source_data, upsert_to_table
-from src.common.logging_config import setup_logging
 import os
-from pyspark.sql.functions import current_date, col, md5, concat_ws
+
+from pyspark.sql.functions import col, concat_ws, current_date, md5
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import read_source_data, upsert_to_table
 
 logger = setup_logging()
 
 # Define table names and spark context
-SOURCE_TABLE = "silver.matches_s2r" 
+SOURCE_TABLE = "silver.matches_s2r"
 TARGET_TABLE = "gold.dim_match_gd"
-spark = create_databricks_session(catalog='aoe_dev', schema='silver')
-pk = 'match_pk'
+spark = create_databricks_session(catalog="aoe_dev", schema="silver")
+pk = "match_pk"
+
 
 def transform_dataframe(df):
     logger.info("Matches: applying transformation steps.")
 
     trans_df = df.withColumn(
-            "match_pk",
-            md5(concat_ws("~"
-                , col("game_id").cast("string")
-                , col("source").cast("string")))
+        "match_pk",
+        md5(
+            concat_ws("~", col("game_id").cast("string"), col("source").cast("string"))
+        ),
     ).select(
         col("match_pk"),
-        col("game_id"), 
-        col("map"), 
+        col("game_id"),
+        col("map"),
         col("avg_elo"),
         col("game_duration_secs"),
         col("actual_duration_secs"),
@@ -36,7 +39,7 @@ def transform_dataframe(df):
         col("patch"),
         current_date().alias("load_date"),
         col("source"),
-        col("file_date")
+        col("file_date"),
     )
     return trans_df
 

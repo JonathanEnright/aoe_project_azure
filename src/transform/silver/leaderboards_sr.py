@@ -1,10 +1,21 @@
-from src.common.base_utils import create_databricks_session
-from src.common.transform_utils import read_source_data, apply_target_schema, write_to_table, deduplicate_by_key
-from src.common.logging_config import setup_logging
 import os
+
 from pyspark.sql.functions import col, explode, to_timestamp
 from pyspark.sql.types import (
-    StructType, StructField, IntegerType, StringType, TimestampType
+    IntegerType,
+    StringType,
+    StructField,
+    StructType,
+    TimestampType,
+)
+
+from src.common.base_utils import create_databricks_session
+from src.common.logging_config import setup_logging
+from src.common.transform_utils import (
+    apply_target_schema,
+    deduplicate_by_key,
+    read_source_data,
+    write_to_table,
 )
 
 logger = setup_logging()
@@ -12,49 +23,52 @@ logger = setup_logging()
 # Define table names and spark context
 SOURCE_TABLE = "bronze.relic_br"
 TARGET_TABLE = "silver.leaderboards_sr"
-spark = create_databricks_session(catalog='aoe_dev', schema='bronze')
+spark = create_databricks_session(catalog="aoe_dev", schema="bronze")
+
 
 def define_target_schema():
-    schema = StructType([
-        StructField("disputes", IntegerType()),
-        StructField("drops", IntegerType()),
-        StructField("highestrank", IntegerType()),
-        StructField("highestranklevel", IntegerType()),
-        StructField("highestrating", IntegerType()),
-        StructField("last_match_date", TimestampType()),
-        StructField("leaderboard_id", IntegerType()),
-        StructField("losses", IntegerType()),
-        StructField("rank", IntegerType()),
-        StructField("ranklevel", IntegerType()),
-        StructField("ranktotal", IntegerType()),
-        StructField("rating", IntegerType()),
-        StructField("regionrank", IntegerType()),
-        StructField("regionranktotal", IntegerType()),
-        StructField("statgroup_id", IntegerType()),
-        StructField("streak", IntegerType()),
-        StructField("wins", IntegerType()),
-        StructField("ldts", TimestampType()),
-        StructField("source", StringType())
-    ])
+    schema = StructType(
+        [
+            StructField("disputes", IntegerType()),
+            StructField("drops", IntegerType()),
+            StructField("highestrank", IntegerType()),
+            StructField("highestranklevel", IntegerType()),
+            StructField("highestrating", IntegerType()),
+            StructField("last_match_date", TimestampType()),
+            StructField("leaderboard_id", IntegerType()),
+            StructField("losses", IntegerType()),
+            StructField("rank", IntegerType()),
+            StructField("ranklevel", IntegerType()),
+            StructField("ranktotal", IntegerType()),
+            StructField("rating", IntegerType()),
+            StructField("regionrank", IntegerType()),
+            StructField("regionranktotal", IntegerType()),
+            StructField("statgroup_id", IntegerType()),
+            StructField("streak", IntegerType()),
+            StructField("wins", IntegerType()),
+            StructField("ldts", TimestampType()),
+            StructField("source", StringType()),
+        ]
+    )
 
     return schema
 
 
 def transform_dataframe(df):
-    logger.info(f"Adding in transformation fields")
+    logger.info("Adding in transformation fields")
 
-    flattened_df = df.select(
-        explode("leaderboardStats").alias("lstats"),
-        "ldts",
-        "source"
-    ).select(
-        col("lstats.*"),
-        to_timestamp(col("lastmatchdate")).alias("last_match_date"),
-        "ldts",
-        "source"
-    ).distinct()
+    flattened_df = (
+        df.select(explode("leaderboardStats").alias("lstats"), "ldts", "source")
+        .select(
+            col("lstats.*"),
+            to_timestamp(col("lastmatchdate")).alias("last_match_date"),
+            "ldts",
+            "source",
+        )
+        .distinct()
+    )
 
-    trans_df = deduplicate_by_key(flattened_df, 'statgroup_id', 'ldts')
+    trans_df = deduplicate_by_key(flattened_df, "statgroup_id", "ldts")
     return trans_df
 
 
@@ -73,7 +87,7 @@ def main():
     final_df = apply_target_schema(trans_df, target_schema, spark)
     write_to_table(final_df, TARGET_TABLE)
     logger.info(f"Script '{os.path.basename(__file__)}' complete.")
-    
+
 
 if __name__ == "__main__":
     main()

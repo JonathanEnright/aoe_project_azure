@@ -1,9 +1,16 @@
-from src.common.base_utils import Config, Datasource, timer, fetch_api_json, create_adls2_session
-from src.common.extract_utils import validate_json_schema
-from src.common.pydantic_models import ApiSchema
-from src.common.load_utils import load_json_data
 from pathlib import Path
+
+from src.common.base_utils import (
+    Config,
+    Datasource,
+    create_adls2_session,
+    fetch_api_json,
+    timer,
+)
+from src.common.extract_utils import validate_json_schema
+from src.common.load_utils import load_json_data
 from src.common.logging_config import setup_logging
+from src.common.pydantic_models import ApiSchema
 
 YAML_KEY = "metadata"
 yaml_fn = "config.yaml"
@@ -12,14 +19,14 @@ logger = setup_logging()
 # Get the directory of the current script
 script_dir = Path(__file__).resolve().parent
 
-YAML_CONFIG = str(script_dir/yaml_fn)
+YAML_CONFIG = str(script_dir / yaml_fn)
 
 
 @timer
 def main(*args, **kwargs):
     # Setup:
     adls2 = create_adls2_session()
-    ds = Datasource(YAML_KEY, Config(YAML_CONFIG))    
+    ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
     _validation_schema = ApiSchema
     _fn = f"{ds.run_end_date}_{ds.suffix}"
 
