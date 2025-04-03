@@ -1,0 +1,19 @@
+name: CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_and_run_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run Databricks Job for Prod
+        env:
+          CATALOG_ENV: PROD
+        run: |
+          python src/orchestration/run_all.py
