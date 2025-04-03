@@ -13,3 +13,5 @@ fastparquet==2024.5.0
 streamlit
 ruff
 databricks-connect==15.4.0
+setuptools
+wheel
