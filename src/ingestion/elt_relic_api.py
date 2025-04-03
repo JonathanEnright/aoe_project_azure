@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from src.common.base_utils import Config, Datasource, create_adls2_session, timer
+from src.common.env_setting import EnvConfig
 from src.common.extract_utils import fetch_relic_chunk, validate_json_schema
 from src.common.load_utils import load_json_data
 from src.common.logging_config import setup_logging
@@ -22,6 +23,7 @@ def main(*args, **kwargs):
     adls2 = create_adls2_session()
     ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
     _validation_schema = RelicResponse
+    _container = f"{EnvConfig.ENV_NAME}/{ds.container_suffix}"
 
     # Extract phase
     logger.info("Starting data extraction.")
@@ -34,7 +36,7 @@ def main(*args, **kwargs):
         validated_data = validate_json_schema(json_data, _validation_schema)
 
         # Load phase
-        load_json_data(validated_data, ds.container, fn, ds.storage_account, adls2)
+        load_json_data(validated_data, _container, fn, ds.storage_account, adls2)
     logger.info(f"Script '{Path(__file__).stem}' finished!")
 
 

@@ -3,6 +3,7 @@ import os
 from pyspark.sql.functions import coalesce, col, lit
 
 from src.common.base_utils import create_databricks_session
+from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, write_to_table
 
@@ -14,7 +15,7 @@ leaderboard_data = "silver.leaderboards_sr"
 country_codes = "bronze.country_list_br"
 
 TARGET_TABLE = "silver.player_leaderboard_stats_s2r"
-spark = create_databricks_session(catalog="aoe_dev", schema="silver")
+spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema="silver")
 
 
 def transform_dataframe(stat_group_data, leaderboard_data, country_codes):

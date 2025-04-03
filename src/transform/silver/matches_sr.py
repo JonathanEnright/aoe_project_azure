@@ -13,6 +13,7 @@ from pyspark.sql.types import (
 )
 
 from src.common.base_utils import create_databricks_session
+from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import (
     apply_target_schema,
@@ -25,7 +26,7 @@ logger = setup_logging()
 # Define table names and spark context
 SOURCE_TABLE = "bronze.matches_br"
 TARGET_TABLE = "silver.matches_sr"
-spark = create_databricks_session(catalog="aoe_dev", schema="bronze")
+spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema="bronze")
 
 
 def define_target_schema():

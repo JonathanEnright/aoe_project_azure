@@ -32,7 +32,7 @@ st.set_page_config(layout="wide")
 # ----------------------------------------------------------------------------------------------------------------------
 # Global vars to pass through to functions
 storage_account = "jonoaoedlext"
-container = "dev"
+container = "prod"
 
 # Leaderboard Analysis
 l_file_path = "consumption/vw_leaderboard_analysis.csv.gz"

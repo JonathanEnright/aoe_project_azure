@@ -32,3 +32,18 @@ tasks:
     description: Run fact_player_matches_gd
     entry_point: fact_player_matches_gd
     depends_on: [task_dim_civ_gd, task_dim_date_gd, task_dim_match_gd, task_dim_player_gd]
+
+  - task_key: task_vw_civ_performance_analysis
+    description: Run vw_civ_performance_analysis
+    entry_point: vw_civ_performance_analysis
+    depends_on: [task_fact_player_matches_gd]
+
+  - task_key: task_vw_leaderboard_analysis
+    description: Run vw_leaderboard_analysis
+    entry_point: vw_leaderboard_analysis
+    depends_on: [task_fact_player_matches_gd]
+
+  - task_key: task_vw_opponent_civ_analysis
+    description: Run vw_opponent_civ_analysis
+    entry_point: vw_opponent_civ_analysis
+    depends_on: [task_fact_player_matches_gd]

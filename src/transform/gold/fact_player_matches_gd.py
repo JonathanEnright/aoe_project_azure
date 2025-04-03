@@ -4,6 +4,7 @@ from pyspark.sql.functions import col, current_date
 
 from src.common.base_utils import create_databricks_session
 from src.common.dq_rules import DQRules
+from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
 
@@ -17,7 +18,7 @@ dim_player = "gold.dim_player_gd"
 dim_date = "gold.dim_date_gd"
 
 TARGET_TABLE = "gold.fact_player_matches_gd"
-spark = create_databricks_session(catalog="aoe_dev", schema="gold")
+spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema="gold")
 
 pk = "fact_pk"
 

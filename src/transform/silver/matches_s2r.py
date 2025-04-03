@@ -2,6 +2,7 @@ import os
 
 from src.common.base_utils import create_databricks_session
 from src.common.dq_rules import DQRules
+from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
 
@@ -10,7 +11,7 @@ logger = setup_logging()
 # Define table names and spark context
 SOURCE_TABLE = "silver.matches_sr"
 TARGET_TABLE = "silver.matches_s2r"
-spark = create_databricks_session(catalog="aoe_dev", schema="bronze")
+spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema="bronze")
 
 pk = "game_id"
 

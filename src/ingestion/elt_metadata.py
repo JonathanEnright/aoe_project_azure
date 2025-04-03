@@ -7,6 +7,7 @@ from src.common.base_utils import (
     fetch_api_json,
     timer,
 )
+from src.common.env_setting import EnvConfig
 from src.common.extract_utils import validate_json_schema
 from src.common.load_utils import load_json_data
 from src.common.logging_config import setup_logging
@@ -28,6 +29,7 @@ def main(*args, **kwargs):
     adls2 = create_adls2_session()
     ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
     _validation_schema = ApiSchema
+    _container = f"{EnvConfig.ENV_NAME}/{ds.container_suffix}"
     _fn = f"{ds.run_end_date}_{ds.suffix}"
 
     try:
@@ -47,7 +49,7 @@ def main(*args, **kwargs):
 
         # Load phase
         logger.info("Starting data loading.")
-        load_json_data(validated_data, ds.container, _fn, ds.storage_account, adls2)
+        load_json_data(validated_data, _container, _fn, ds.storage_account, adls2)
 
         logger.info("ELT process completed successfully.")
     except Exception as e:

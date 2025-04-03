@@ -7,6 +7,7 @@ from src.common.base_utils import (
     fetch_api_file,
     timer,
 )
+from src.common.env_setting import EnvConfig
 from src.common.extract_utils import (
     create_stats_endpoints,
     generate_weekly_queries,
@@ -31,6 +32,7 @@ def main(*args, **kwargs):
     # Setup:
     adls2 = create_adls2_session()
     ds = Datasource(YAML_KEY, Config(YAML_CONFIG))
+    _container = f"{EnvConfig.ENV_NAME}/{ds.container_suffix}"
     _validation_schema = Players
     _base_url = ds.base_url + ds.dir_url
 
@@ -55,7 +57,7 @@ def main(*args, **kwargs):
         validated_data = validate_parquet_schema(content, _validation_schema)
 
         # Load phase
-        load_parquet_data(validated_data, ds.container, fn, ds.storage_account, adls2)
+        load_parquet_data(validated_data, _container, fn, ds.storage_account, adls2)
         logger.info(f"{i + 1}/{len(endpoints)} loaded.")
     logger.info(f"Script '{Path(__file__).stem}' finished!")
 

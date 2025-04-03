@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from src.common.base_utils import create_databricks_session, load_yaml_data
+from src.common.env_setting import EnvConfig
 from src.common.transform_utils import (
     add_metadata_columns,
     create_external_table,
@@ -19,8 +20,9 @@ def bronze_pipeline(yaml_key, logger):
     YAML_CONFIG = os.path.join(script_dir, "_br_tables.yaml")
 
     cfg = load_yaml_data(YAML_CONFIG, yaml_key)
-    spark = create_databricks_session(cfg["catalog"], cfg["database"])
-
+    spark = create_databricks_session(catalog=EnvConfig.CATALOG_NAME, schema=cfg["database"])
+    cfg['location'] = f"abfss://{EnvConfig.ENV_NAME}@{cfg['adls_location']}"
+    print(cfg['location'])
     create_external_table(spark, cfg)
     df = add_metadata_columns(spark, cfg)
 
