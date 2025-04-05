@@ -4,10 +4,12 @@ matches:
   format: parquet
   catalog: "aoe_dev"
   database: "bronze"
-  options: "inferSchema 'true'"
+  options:
+    inferSchema: "true"
   source: 'AOESTATS_MATCHES'
   file_date: true
   managed_table: matches_br
+  backdate: 21 
 
 players:
   table: players_ext
@@ -15,10 +17,12 @@ players:
   format: parquet
   catalog: "aoe_dev"
   database: "bronze"
-  options: "inferSchema 'true'"
+  options:
+    inferSchema: "true"
   source: 'AOESTATS_PLAYERS'
   file_date: true
   managed_table: players_br
+  backdate: 21 
 
 relic:
   table: relic_ext
@@ -26,7 +30,8 @@ relic:
   format: json
   catalog: "aoe_dev"
   database: "bronze"
-  options: "multiline 'true'"
+  options: 
+    multiLine: "true"
   source: 'RELIC_LINK_API'
   file_date: false
   managed_table: relic_br
@@ -37,7 +42,8 @@ country_list:
   format: csv
   catalog: "aoe_dev"
   database: "bronze"
-  options: "header 'true'"
+  options:
+    header: "true"
   source: 'LOOKUP_DATA'
   file_date: false
   managed_table: country_list_br

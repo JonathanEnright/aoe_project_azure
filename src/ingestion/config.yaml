@@ -1,8 +1,8 @@
 # --------------------------------------------------------------------------
 # Set all defaults
 set_defaults: &parent_defaults
-  backdate_days_start: 30
-  backdate_days_end: 10
+  backdate_days_start: 20
+  backdate_days_end: 5
   target_run_date: ~
   target_run_end_date: ~
   date_format: '%Y-%m-%d'
@@ -36,12 +36,18 @@ datasource:
     container_suffix: 'matches'
     suffix: 'matches'
     prefix: 'matches'
+    cast_mapping:
+      raw_match_type: float64
+
 
   players:
     <<: *parent_defaults
     container_suffix: players
     suffix: 'players'
     prefix: 'players'
+    cast_mapping:
+      profile_id: Int64
+      replay_summary_raw: object
 
   country_list:
     <<: *parent_defaults
