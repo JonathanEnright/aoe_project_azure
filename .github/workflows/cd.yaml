@@ -1,7 +1,7 @@
 name: CD Workflow
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -27,12 +27,12 @@ jobs:
         run: |
           pip install -e .
 
-      # - name: Run Databricks Job for Prod
-      #   env:
-      #     CATALOG_ENV: PROD
-      #     DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID }}
-      #     DATABRICKS_HOST_URL: ${{ secrets.DATABRICKS_HOST_URL }}
-      #     DATABRICKS_PAT: ${{ secrets.DATABRICKS_PAT }}
-      #   run: |
-      #     python -m src.orchestration.run_all
+      - name: Run Databricks Job for Prod
+        env:
+          CATALOG_ENV: PROD
+          DATABRICKS_CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID }}
+          DATABRICKS_HOST_URL: ${{ secrets.DATABRICKS_HOST_URL }}
+          DATABRICKS_PAT: ${{ secrets.DATABRICKS_PAT }}
+        run: |
+          python -m src.orchestration.run_all
           

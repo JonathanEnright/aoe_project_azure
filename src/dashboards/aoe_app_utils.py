@@ -76,7 +76,6 @@ def get_data(storage_account, container, file_path):
     df["selected"] = True
     if df is not None:
         pass
-        # st.toast("Successfuly read data!")
     else:
         st.error("Unable to read data.")
     return df
@@ -99,7 +98,6 @@ def reset_state_callback():
     """Reset session state for filter variables when button clicked."""
     st.session_state.counter = 1 + st.session_state.counter
     for key in st.session_state.keys():
-        # if key.endswith("_query"):
         st.session_state[key] = []
 
 

@@ -23,8 +23,9 @@ def bronze_pipeline(yaml_key, logger):
     cfg['location'] = f"abfss://{EnvConfig.ENV_NAME}@{cfg['adls_location']}"
 
     spark.conf.set("spark.sql.legacy.parquet.nanosAsLong", "true")
+
     df = spark.read.format(cfg['format']).options(**cfg['options']).load(cfg['location'])
-    # spark.read.format('json').load(adls_path2)
+
     df = add_metadata_columns(spark, cfg, df)
     try:
         write_to_table(df, table_name=f"{cfg['managed_table']}")

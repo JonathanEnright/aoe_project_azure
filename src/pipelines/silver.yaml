@@ -1,7 +1,7 @@
 job_name: Run_Silver
 
 schedule:
-  cron_expression: "0 07 22 ? * SUN"
+  cron_expression: "0 0 21 ? * SUN"
   timezone_id: UTC
 
 notifications:

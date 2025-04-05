@@ -37,9 +37,6 @@ def add_metadata_columns(spark, cfg, df):
     # Load date time stamp
     df = df.withColumn("ldts", current_timestamp())
 
-    # Add filter condition to reduce number of days of data stored (i.e. last 45 days)
-    # TODO: Add filter condition function call
-
     return df
 
 

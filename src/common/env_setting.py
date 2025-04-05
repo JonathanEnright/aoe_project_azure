@@ -10,8 +10,6 @@ class CatalogEnvironment(str, Enum):
 class EnvConfig:
     """Holds application configuration, derived from environment variables."""
 
-    # Read the desired environment setting (e.g., 'DEV', 'PROD')
-    # Defaults to 'DEV' if the environment variable isn't set.
     CATALOG_ENV_NAME = os.getenv("CATALOG_ENV", "PROD").upper()
     ENV_NAME = os.getenv("ENV_NAME", "PROD").lower()
 

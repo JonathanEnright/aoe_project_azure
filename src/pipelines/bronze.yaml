@@ -1,7 +1,7 @@
-job_name: Run_Bronze2
+job_name: Run_Bronze
 
 schedule:
-  cron_expression: "0 07 22 ? * SUN"
+  cron_expression: "0 30 20 ? * SUN"
   timezone_id: UTC
 
 notifications:
@@ -16,18 +16,18 @@ tasks:
     description: Run matches_br
     entry_point: matches_br
     
-  # - task_key: task_players_br
-  #   description: Run players_br
-  #   entry_point: players_br
+  - task_key: task_players_br
+    description: Run players_br
+    entry_point: players_br
 
-  # - task_key: task_dim_date_br
-  #   description: Run dim_date_br
-  #   entry_point: dim_date_br
+  - task_key: task_dim_date_br
+    description: Run dim_date_br
+    entry_point: dim_date_br
   
-  # - task_key: task_relic_br
-  #   description: Run relic_br
-  #   entry_point: relic_br
+  - task_key: task_relic_br
+    description: Run relic_br
+    entry_point: relic_br
 
-  # - task_key: task_country_list_br
-  #   description: Run country_list_br
-  #   entry_point: country_list_br
+  - task_key: task_country_list_br
+    description: Run country_list_br
+    entry_point: country_list_br
