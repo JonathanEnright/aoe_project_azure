@@ -21,9 +21,7 @@ pk = "id"
 
 def transform_dataframe(df):
     logger.info("Adding in transformation fields")
-    df = df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
-    # Placeholder function. No transformation required for this table.
-    trans_df = df
+    trans_df = df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
     return trans_df
 
 def dq_checks(df):

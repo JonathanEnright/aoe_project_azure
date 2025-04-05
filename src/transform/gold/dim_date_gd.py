@@ -20,7 +20,6 @@ pk = "date_pk"
 def transform_dataframe(df):
     logger.info("Dim Date: applying transformation steps.")
 
-    # Assuming df is your input DataFrame
     trans_df = df.select(
         col("date_pk"),
         col("date"),

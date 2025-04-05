@@ -23,6 +23,8 @@ databricks_example_job.json
 archive_old
 build
 dist
+src/other
+src/sandbox
 cluster_conf.json
 export_all.py
 .pytest_cache

@@ -7,8 +7,6 @@ from typing import BinaryIO, Dict, Optional
 
 import requests
 import yaml
-
-# from import_secrets import *
 from azure.identity import ClientSecretCredential
 from databricks.connect.session import DatabricksSession
 from databricks.sdk.core import Config as DBX_Config
