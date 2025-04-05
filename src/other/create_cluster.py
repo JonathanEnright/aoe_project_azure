@@ -37,7 +37,7 @@ client = WorkspaceClient(
 
 # Define the cluster configuration as a dictionary
 cluster_config = {
-    "cluster_name": "Aoe_Project_Cluster_6",
+    "cluster_name": "Aoe_Project_Cluster",
     "spark_version": "15.4.x-scala2.12",
     "spark_conf": {
         "spark.master": "local[*, 4]",

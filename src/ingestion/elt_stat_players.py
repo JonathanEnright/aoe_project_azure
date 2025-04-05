@@ -54,8 +54,13 @@ def main(*args, **kwargs):
             continue  # Skip to the next iteration of the loop
 
         # Validate phase
-        validated_data = validate_parquet_schema(content, _validation_schema)
+        validated_data = validate_parquet_schema(content, _validation_schema, ds.cast_mapping)
 
+        if validated_data is None:
+            logger.error(
+                f"No valid data found for file: {endpoint_url}"
+            )
+            continue  # Skip to the next iteration of the loop
         # Load phase
         load_parquet_data(validated_data, _container, fn, ds.storage_account, adls2)
         logger.info(f"{i + 1}/{len(endpoints)} loaded.")

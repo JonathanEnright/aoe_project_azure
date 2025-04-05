@@ -7,6 +7,7 @@ from src.common.dq_rules import DQRules
 from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
+from src.transform.master_date import master_run_date, master_run_end_date
 
 logger = setup_logging()
 
@@ -31,6 +32,8 @@ def transform_dataframe(player_match_sr, dim_civ, dim_match, dim_player, dim_dat
     dim_match_df = read_source_data(spark, dim_match)
     dim_player_df = read_source_data(spark, dim_player)
     dim_date_df = read_source_data(spark, dim_date)
+
+    player_match_sr_df = player_match_sr_df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
 
     trans_df = (
         player_match_sr_df.alias("pm")

@@ -1,10 +1,13 @@
 import os
 
+from pyspark.sql.functions import col
+
 from src.common.base_utils import create_databricks_session
 from src.common.dq_rules import DQRules
 from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
+from src.transform.master_date import master_run_date, master_run_end_date
 
 logger = setup_logging()
 
@@ -18,7 +21,7 @@ pk = "id"
 
 def transform_dataframe(df):
     logger.info("Adding in transformation fields")
-
+    df = df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
     # Placeholder function. No transformation required for this table.
     trans_df = df
     return trans_df

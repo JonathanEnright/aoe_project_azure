@@ -7,6 +7,7 @@ from src.common.dq_rules import DQRules
 from src.common.env_setting import EnvConfig
 from src.common.logging_config import setup_logging
 from src.common.transform_utils import read_source_data, upsert_to_table
+from src.transform.master_date import master_run_date, master_run_end_date
 
 logger = setup_logging()
 
@@ -19,7 +20,7 @@ pk = "match_pk"
 
 def transform_dataframe(df):
     logger.info("Matches: applying transformation steps.")
-
+    df = df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
     trans_df = df.withColumn(
         "match_pk",
         md5(
@@ -32,7 +33,7 @@ def transform_dataframe(df):
         col("avg_elo"),
         col("game_duration_secs"),
         col("actual_duration_secs"),
-        col("game_started_timestamp"),
+        col("started_timestamp"),
         col("game_date"),
         col("team_0_elo"),
         col("team_1_elo"),

@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="aoe_azure",
-    version="0.44",
+    version="0.82",
     packages=find_packages(),
     include_package_data=True,
     entry_points={

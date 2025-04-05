@@ -13,37 +13,12 @@ from pyspark.sql.functions import (
 from pyspark.sql.types import StringType
 from pyspark.sql.window import Window
 
+from src.transform.master_date import master_run_date, master_run_end_date
+
 logger = logging.getLogger(__name__)
 
 
-def create_external_table(spark, cfg):
-    tbl = cfg["table"]
-
-    # Configure Spark to handle Parquet timestamps correctly
-    spark.conf.set("spark.sql.legacy.parquet.nanosAsLong", "true")
-
-    # If table in Unity Catalogue, refresh metadata to read latest files
-    if spark.catalog.tableExists(tbl):
-        spark.catalog.refreshTable(tbl)
-        logger.info(f"External Table '{tbl}' exists, metadata now refreshed!")
-
-    # Else, register as new External table in Databricks Unity Catalogue
-    else:
-        create_table_sql = f"""
-            CREATE TABLE {tbl}
-            USING {cfg["format"]}
-            OPTIONS ( {cfg["options"]} )
-            LOCATION "{cfg["location"]}"
-        """
-        spark.sql(create_table_sql)
-
-        logger.info(f"External Table '{tbl}' successfully created!")
-    return spark, cfg
-
-
-def add_metadata_columns(spark, cfg):
-    # Use DataFrame API to read the table
-    df = spark.read.table(f"{cfg['table']}")
+def add_metadata_columns(spark, cfg, df):
 
     # Add filename
     df = df.withColumn("fn", split(input_file_name(), cfg["location"])[1])
@@ -51,6 +26,7 @@ def add_metadata_columns(spark, cfg):
     # Extract file_date if specified
     if cfg["file_date"]:
         df = df.withColumn("file_date", to_date(split(col("fn"), "\\.")[0]))
+        df = df.filter((col('file_date') >= master_run_date) & (col('file_date') <= master_run_end_date))
 
     # Record source of data
     df = df.withColumn("source", lit(cfg["source"]).cast(StringType()))

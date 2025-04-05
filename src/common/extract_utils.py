@@ -1,6 +1,7 @@
 import logging
 import time
 from datetime import timedelta
+from io import BytesIO
 
 import pandas as pd
 from pydantic import ValidationError
@@ -41,18 +42,43 @@ def validate_json_schema(json_data, validation_schema):
         return []
 
 
-def validate_parquet_schema(content, validation_schema):
+def recast_fields(records: list, cast_mapping: dict) -> BytesIO:
+    validated_df = pd.DataFrame(records)
+    for col, dtype in cast_mapping.items():
+        if col in validated_df.columns:
+            try:
+                validated_df[col] = validated_df[col].astype(dtype)
+            except (TypeError, ValueError) as e:
+                logging.warning(f"Failed to cast column '{col}' to '{dtype}': {e}")
+        else:
+            logging.warning(f"Column '{col}' not found in DataFrame (skipping typecast)")
+
+    buffer = BytesIO()
+    validated_df.to_parquet(buffer, index=False, engine='pyarrow')
+    buffer.seek(0)
+
+    return buffer
+
+def validate_parquet_schema(content, validation_schema, cast_mapping):
     df = pd.read_parquet(content)
     records = df.to_dict(orient="records")
+
+    validated_records = []
     for record in records:
         try:
-            validation_schema.model_validate(record)
+            validated = validation_schema.model_validate(record)
+            validated_records.append(validated.model_dump())
         except ValidationError as e:
             logger.error(f"Validation error: {e}")
 
-    # Reset the pointer to start of file:
-    content.seek(0)
-    return content
+    if len(validated_records) == 0:
+        logger.error("Validation produced 0 valid records. Skipping file write.")
+        pass
+
+    else:
+        buffer = recast_fields(validated_records, cast_mapping)
+
+        return buffer
 
 
 def generate_weekly_queries(start_date, end_date):
